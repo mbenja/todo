@@ -49,7 +49,7 @@ function ArchiveList(props) {
         const searchText = event.target.value
 
         if (searchText !== "") {
-            setFilteredTodos(todos.filter((todo => todo.toLowerCase().includes(searchText.toLowerCase()))));
+            setFilteredTodos(todos.filter((todo => todo.text.toLowerCase().includes(searchText.toLowerCase()))));
         } else {
             setFilteredTodos(todos);
         }
@@ -68,12 +68,12 @@ function ArchiveList(props) {
 
     function renderListItems(todos) {
         return (
-            todos.map((todo, i) =>
-                <ListItem key={`todo-item-${i}`} role={undefined} dense button onClick={() => {}}>
+            todos.map((todo) =>
+                <ListItem key={`todo-item-${todo.id}`} role={undefined} dense button onClick={() => {}}>
                     <ListItemIcon>
                         <UnarchiveIcon />
                     </ListItemIcon>
-                    <ListItemText id={`todo-text-${i}`} primary={todo} />
+                    <ListItemText id={`todo-text-${todo.id}`} primary={todo.text} />
                     <ListItemSecondaryAction>
                     <IconButton edge="end">
                         <DeleteIcon />

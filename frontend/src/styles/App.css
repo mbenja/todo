@@ -3,3 +3,8 @@
   flex-direction: column;
   justify-content: center;
 }
+
+.app-loading-container {
+  margin: 16px auto;
+  width: 75%;
+}

@@ -15,7 +15,7 @@ import { makeStyles } from '@material-ui/core/styles';
 import "../styles/TodoList.css";
 
 const propTypes = {
-    todos: PropTypes.arrayOf(PropTypes.string)
+    todos: PropTypes.arrayOf(PropTypes.object)
 };
 
 const defaultProps = {
@@ -48,17 +48,17 @@ function TodoList(props) {
 
     function renderListItems() {
         return (
-            todos.map((todo, i) =>
-                <ListItem key={`todo-item-${i}`} role={undefined} dense button onClick={() => {}}>
+            todos.map((todo) =>
+                <ListItem key={`todo-item-${todo.id}`} role={undefined} dense button onClick={() => {}}>
                     <ListItemIcon>
                         <Checkbox
                             edge="start"
                             checked={false}
                             tabIndex={-1}
-                            inputProps={{ 'aria-labelledby': `todo-checkbox-${i}` }}
+                            inputProps={{ 'aria-labelledby': `todo-checkbox-${todo.id}` }}
                         />
                     </ListItemIcon>
-                    <ListItemText id={`todo-text-${i}`} primary={todo} />
+                    <ListItemText id={`todo-text-${todo.id}`} primary={todo.text} />
                     <ListItemSecondaryAction>
                     <IconButton edge="end">
                         <DeleteIcon />
