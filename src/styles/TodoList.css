@@ -1,0 +1,5 @@
+.todo-list-container {
+    display: flex;
+    margin: 0px auto;
+    width: 75%;
+}

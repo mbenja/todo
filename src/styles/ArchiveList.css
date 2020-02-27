@@ -1,0 +1,10 @@
+.archive-list-container {
+    display: flex;
+    flex-direction: column;
+    margin: 0px auto;
+    width: 75%;
+}
+
+.archive-list-search-container {
+    margin-bottom: 8px;
+}

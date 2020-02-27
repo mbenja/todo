@@ -1,0 +1,7 @@
+.bottom-menu-bar-container {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    margin: 8px 0px;
+    width: 100%;
+}

@@ -1,7 +1,18 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
-import './index.css';
-import 'typeface-roboto';
+import { createMuiTheme } from '@material-ui/core/styles';
+import { ThemeProvider } from '@material-ui/styles';
+
 import App from './components/App';
 
-ReactDOM.render(<App />, document.getElementById('root'));
+import './index.css';
+import "./styles/colors.css";
+import 'typeface-roboto';
+
+const darkTheme = createMuiTheme({
+    palette: {
+      type: 'dark',
+    },
+  });
+
+ReactDOM.render(<ThemeProvider theme={darkTheme}><App /></ThemeProvider>, document.getElementById('root'));

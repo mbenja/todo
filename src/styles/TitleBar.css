@@ -1,5 +1,12 @@
 .titlebar-container {
-    font-size: 60px;
-    margin: 64px 0px;
+    display: flex;
+    flex-direction: column;
+    margin: 8px auto;
     text-align: center;
+    width: 75%;
+}
+
+.titlebar-logo {
+    margin-bottom: 8px;
+    width: 7.5%;
 }
