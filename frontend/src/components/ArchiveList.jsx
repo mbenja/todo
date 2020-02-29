@@ -17,12 +17,16 @@ import { makeStyles } from '@material-ui/core/styles';
 import "../styles/ArchiveList.css";
 
 const propTypes = {
-    todos: PropTypes.arrayOf(PropTypes.object)
+    todos: PropTypes.arrayOf(PropTypes.object),
+    onRestoreTodo: PropTypes.func,
+    onDeleteTodo: PropTypes.func
 };
 
 const defaultProps = {
-    todos: []
-}
+    todos: [],
+    onRestoreTodo: () => { },
+    onDeleteTodo: () => { }
+};
 
 const useStyles = makeStyles(theme => ({
     root: {
@@ -42,25 +46,12 @@ const useStyles = makeStyles(theme => ({
 
 function ArchiveList(props) {
     const classes = useStyles();
-    const { todos } = props;
+    const { todos, onRestoreTodo, onDeleteTodo } = props;
     const [filterText, setFilterText] = useState("");
-    const [filteredTodos, setFilteredTodos] = useState(todos);
-
-    function handleSearchTextChange(event) {
-        const searchText = event.target.value
-
-        if (searchText !== "") {
-            setFilterText(searchText);
-            setFilteredTodos(todos.filter((todo => todo.text.toLowerCase().includes(searchText.toLowerCase()))));
-        } else {
-            setFilterText("");
-            setFilteredTodos(todos);
-        }
-    }
 
     function renderNoItems() {
         return (
-            <ListItem key={`todo-item-${0}`} disabled role={undefined} dense button onClick={() => {}}>
+            <ListItem key={`todo-item-${0}`} disabled role={undefined} dense>
                 <ListItemIcon>
                     <InfoIcon />
                 </ListItemIcon>
@@ -70,22 +61,25 @@ function ArchiveList(props) {
     }
 
     function renderListItems() {
-        const relevantTodos = filterText.length > 0 ? filteredTodos : todos;
-        return (
-            relevantTodos.map((todo) =>
-                <ListItem key={`todo-item-${todo.id}`} role={undefined} dense button onClick={() => {}}>
-                    <ListItemIcon>
-                        <UnarchiveIcon />
-                    </ListItemIcon>
-                    <ListItemText id={`todo-text-${todo.id}`} primary={todo.text} />
-                    <ListItemSecondaryAction>
-                    <IconButton edge="end">
-                        <DeleteIcon />
-                    </IconButton>
-                    </ListItemSecondaryAction>
-                </ListItem>
-            )
-        )
+        const relevantTodos = filterText.length > 0 ? todos.filter((todo => todo.text.toLowerCase().includes(filterText.toLowerCase()))) : todos;
+        if (relevantTodos.length > 0) {
+            return (
+                relevantTodos.map((todo) =>
+                    <ListItem key={`todo-item-${todo.id}`} role={undefined} dense button onClick={() => onRestoreTodo(todo, true)}>
+                        <ListItemIcon>
+                            <UnarchiveIcon />
+                        </ListItemIcon>
+                        <ListItemText id={`todo-text-${todo.id}`} primary={todo.text} />
+                        <ListItemSecondaryAction>
+                        <IconButton edge="end" onClick={() => onDeleteTodo(todo.id, true)}>
+                            <DeleteIcon />
+                        </IconButton>
+                        </ListItemSecondaryAction>
+                    </ListItem>
+                )
+            );
+        }
+        return renderNoItems();
     }
     
     return (
@@ -95,12 +89,12 @@ function ArchiveList(props) {
                     classes={{ root: classes.search }}
                     startAdornment={<SearchIcon style={{ marginRight: "8px" }} />}
                     placeholder="Search for an archived todo..."
-                    onChange={handleSearchTextChange}
+                    onChange={(e) => setFilterText(e.target.value)}
                     disableUnderline
                 />
             </div>
             <List className={classes.root}>
-                {filteredTodos.length > 0 ? renderListItems() : renderNoItems()}
+                {todos.length > 0 ? renderListItems() : renderNoItems()}
             </List>
         </div>
     )

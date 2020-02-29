@@ -34,15 +34,4 @@ router.delete("/delete", function(req, res) {
     });
 });
 
-router.post("/archive", function(req, res) {
-    const { text } = req.body;
-    const query = `INSERT INTO archive (text) VALUES ("${text}")`;
-    DBConnection.query(query, function (err, response) {
-        if (err) {
-            res.send(JSON.stringify(err));
-        }
-        res.send(JSON.stringify(response));
-    });
-});
-
 module.exports = router;

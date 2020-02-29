@@ -1,4 +1,5 @@
 import axios from "axios";
+import { createArchive } from "./archiveService";
 
 export async function getTodos() {
     return (await axios.get("/todos")).data;
@@ -13,7 +14,7 @@ export async function deleteTodo(id) {
 }
 
 export async function archiveTodo(todo) {
-    const postResponse = await axios.post("/todos/archive", { text: todo.text });
+    const postResponse = await createArchive(todo.text);
     if (postResponse.status !== 200) {
         return { postResponse: postResponse, deleteResponse: { status: 0 } };
     }

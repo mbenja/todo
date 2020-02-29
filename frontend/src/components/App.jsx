@@ -7,7 +7,7 @@ import BottomMenuBar from "./BottomMenuBar";
 import CustomSnackbar from "./CustomSnackbar";
 
 import { getTodos, createTodo, deleteTodo, archiveTodo } from "../services/todosService";
-import { getArchive } from "../services/archiveService";
+import { getArchive, deleteArchive, restoreArchive } from "../services/archiveService";
 
 import Collapse from '@material-ui/core/Collapse';
 import LinearProgress from '@material-ui/core/LinearProgress';
@@ -51,25 +51,34 @@ function App() {
     }
   }
 
-  async function handleDeleteTodo(id) {
+  async function handleDeleteTodo(id, isArchivedTodo) {
     setIsWorking(true);
-    const response = await deleteTodo(id);
+    const response = isArchivedTodo ? await deleteArchive(id) : await deleteTodo(id);
     setIsWorking(false);
     if (response.status === 200) {
-      setTodos(todos.filter(todo => todo.id !== id));
+      if (isArchivedTodo) {
+        setArchive(archive.filter(archivedTodo => archivedTodo.id !== id));
+      } else {
+        setTodos(todos.filter(todo => todo.id !== id));
+      }
       setFinishedWorkingParams({ showSnackbar: true, message: "Success!", result: "success" });
     } else {
       setFinishedWorkingParams({ showSnackbar: true, message: "Whoops, something went wrong.", result: "error" });
     }
   }
 
-  async function handleArchiveTodo(todo) {
+  async function handleMoveTodo(todo, isRestore) {
     setIsWorking(true);
-    const { postResponse, deleteResponse } = await archiveTodo(todo);
+    const { postResponse, deleteResponse } = isRestore ? await restoreArchive(todo) : await archiveTodo(todo);
     setIsWorking(false);
     if (postResponse.status === 200 && deleteResponse.status === 200) {
-      setTodos(todos.filter(curTodo => curTodo.id !== todo.id));
-      setArchive([...archive, { id: postResponse.data.insertId, text: todo.text }]);
+      if (isRestore) {
+        setArchive(archive.filter(archivedTodo => archivedTodo.id !== todo.id));
+        setTodos([...todos, { id: postResponse.data.insertId, text: todo.text }]);
+      } else {
+        setTodos(todos.filter(curTodo => curTodo.id !== todo.id));
+        setArchive([...archive, { id: postResponse.data.insertId, text: todo.text }]);
+      }
       setFinishedWorkingParams({ showSnackbar: true, message: "Success!", result: "success" });
     } else {
       setFinishedWorkingParams({ showSnackbar: true, message: "Whoops, something went wrong.", result: "error" });
@@ -88,10 +97,10 @@ function App() {
     <div className="app-container">
       <TitleBar />
       <Collapse in={!isViewingArchive} {...(!isViewingArchive ? { timeout: 500 } : {})}>
-        {isLoadingTodos ? renderLoading() : <TodoList todos={todos} onCreateTodo={(todo) => handleCreateTodo(todo)} onDeleteTodo={(todo) => handleDeleteTodo(todo)} onArchiveTodo={(todo) => handleArchiveTodo(todo)} />}
+        {isLoadingTodos ? renderLoading() : <TodoList todos={todos} onCreateTodo={(todo) => handleCreateTodo(todo)} onDeleteTodo={(todo, isArchivedTodo) => handleDeleteTodo(todo, isArchivedTodo)} onArchiveTodo={(todo, isRestore) => handleMoveTodo(todo, isRestore)} />}
       </Collapse>
       <Collapse in={isViewingArchive} {...(isViewingArchive ? { timeout: 500 } : {})}>
-        {isLoadingArchive ? renderLoading() : <ArchiveList todos={archive} />}
+        {isLoadingArchive ? renderLoading() : <ArchiveList todos={archive} onDeleteTodo={(todo, isArchivedTodo) => handleDeleteTodo(todo, isArchivedTodo)} onRestoreTodo={(todo, isRestore) => handleMoveTodo(todo, isRestore)} />}
       </Collapse>
       <BottomMenuBar
         onToggleArchiveClick={() => setIsViewingArchive(!isViewingArchive)}

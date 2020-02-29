@@ -46,13 +46,21 @@ const useStyles = makeStyles(theme => ({
 }));
 
 function TodoList(props) {
-    const [createTodoText, setCreateTodoText] = useState("");
     const classes = useStyles();
     const { todos, onCreateTodo, onDeleteTodo, onArchiveTodo } = props;
+    const [createTodoText, setCreateTodoText] = useState("");
+    const [currentlyChecked, setCurrentlyChecked] = useState(-1);
 
     function handleCreateTodo() {
         setCreateTodoText("");
         onCreateTodo(createTodoText);
+    }
+
+    function handleArchiveTodo(todo, isRestore) {
+        setCurrentlyChecked(todo.id);
+        setTimeout(() => {
+            onArchiveTodo(todo, isRestore);
+        }, 250);
     }
 
     function renderCreateItem() {
@@ -80,7 +88,7 @@ function TodoList(props) {
 
     function renderNoItems() {
         return (
-            <ListItem key={`todo-item-${0}`} disabled role={undefined} dense button onClick={() => { }}>
+            <ListItem key={`todo-item-${0}`} disabled role={undefined} dense>
                 <ListItemIcon>
                     <InfoIcon />
                 </ListItemIcon>
@@ -92,18 +100,18 @@ function TodoList(props) {
     function renderListItems() {
         return (
             todos.map((todo) =>
-                <ListItem key={`todo-item-${todo.id}`} role={undefined} dense button onClick={() => onArchiveTodo(todo)}>
+                <ListItem key={`todo-item-${todo.id}`} role={undefined} dense button onClick={() => handleArchiveTodo(todo, false)}>
                     <ListItemIcon>
                         <Checkbox
                             edge="start"
-                            checked={false}
+                            checked={todo.id === currentlyChecked}
                             tabIndex={-1}
                             inputProps={{ 'aria-labelledby': `todo-checkbox-${todo.id}` }}
                         />
                     </ListItemIcon>
                     <ListItemText id={`todo-text-${todo.id}`} primary={todo.text} />
                     <ListItemSecondaryAction>
-                        <IconButton edge="end" onClick={() => onDeleteTodo(todo.id)}>
+                        <IconButton edge="end" onClick={() => onDeleteTodo(todo.id, false)}>
                             <DeleteIcon />
                         </IconButton>
                     </ListItemSecondaryAction>

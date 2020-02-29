@@ -12,4 +12,27 @@ router.get("/", function(req, res) {
     });
 });
 
+router.post("/create", function(req, res) {
+    const { text } = req.body;
+    const query = `INSERT INTO archive (text) VALUES ("${text}")`;
+    DBConnection.query(query, function (err, response) {
+        if (err) {
+            res.send(JSON.stringify(err));
+        }
+        res.send(JSON.stringify(response));
+    });
+});
+
+router.delete("/delete", function(req, res) {
+    const { id } = req.query;
+    const query = `DELETE FROM archive WHERE id = ${id}`;
+    DBConnection.query(query, function (err, response) {
+        if (err) {
+            res.send(JSON.stringify(err));
+        }
+        res.send(JSON.stringify(response));
+    });
+});
+
+
 module.exports = router;
