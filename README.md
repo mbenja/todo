@@ -1,2 +1,2 @@
 # todo
-Todo list application built using React, Express, and MySQL.
+Todo list application built using React, Express, MySQL, and Material UI.
